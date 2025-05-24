@@ -1,4 +1,4 @@
-
+import pandas as pd
 # calculations.py
 from emission_factors import EMISSION_FACTORS_INDIA, STATE_GRID_EMISSIONS
 
@@ -74,3 +74,24 @@ def calculate_waste_emissions(
         + ewaste_em
     )
     return total
+
+
+
+def get_categories_and_values(home_emissions, transport_emissions, total_co2e, total_waste_co2e):
+    categories = ["Home", "Transport", "Diet", "Waste"]
+    user_vals = [home_emissions, transport_emissions, total_co2e, total_waste_co2e]
+    return categories, user_vals
+
+# Compute annual comparison DataFrame and trees needed
+
+def compute_annual_totals_and_trees(user_vals, national_monthly_averages):
+    # Annualize user and national emissions
+    total_user = sum(user_vals) * 12
+    total_national = sum(national_monthly_averages) 
+
+    df_total = pd.DataFrame(
+        {"You": [total_user], "Indian Average": [total_national]},
+        index=["Annual Total (kg CO₂e)"]
+    )
+    trees_needed = total_user / 22  # ~22 kg CO₂ absorbed per tree per year
+    return df_total, trees_needed
